@@ -3,6 +3,18 @@
 const { program } = require('commander');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
+const { client: db } = require('./db/db');
+
+try {
+  db.connect();
+  db.query(
+    'CREATE TABLE IF NOT EXISTS tasks (id SERIAL PRIMARY KEY, name TEXT, status BOOLEAN, created_at TIMESTAMP DEFAULT NOW())'
+  );
+  console.log('Connected to the database');
+} catch (error) {
+  console.error('Error connecting to the database', error);
+}
 
 program.version('1.0.0').description('My Node CLI');
 
@@ -11,9 +23,16 @@ program.option('-n, --name <type>', 'Add your name').action((options) => {
   console.log(`Hey, ${options.name || 'Harish'}!`);
 });
 
+/**
+ * id
+ * task
+ * status
+ * createdAt
+ */
+
 const data = fs.readFileSync(path.join(__dirname, 'db', 'data.json'), 'utf-8');
 const items = JSON.parse(data);
-// console.log('items', items);
+console.log('items', items);
 
 program
   .command('add <item...>')
@@ -28,9 +47,11 @@ program
     }
     fs.writeFileSync(
       path.join(__dirname, 'db', 'data.json'),
-      JSON.stringify(items)
+      JSON.stringify(items, null, 2)
     );
     console.table(newTasks);
+    db.end();
+    process.exit(0);
   });
 
 program
@@ -45,9 +66,11 @@ program
     });
     fs.writeFileSync(
       path.join(__dirname, 'db', 'data.json'),
-      JSON.stringify(updatedItems)
+      JSON.stringify(updatedItems, null, 2)
     );
     console.log(`Updated Successfully item: ${id}`);
+    db.end();
+    process.exit(0);
   });
 
 program
@@ -67,11 +90,13 @@ program
 
     fs.writeFileSync(
       path.join(__dirname, 'db', 'data.json'),
-      JSON.stringify(filteredTasks)
+      JSON.stringify(filteredTasks, null, 2)
     );
 
     // console.log(filteredTasks);
     console.log(`Deleted Successfully item(s): ${itemsToDelete}`);
+    db.end();
+    process.exit(0);
   });
 
 program
@@ -80,8 +105,8 @@ program
   .option('-n --number <number>', 'List n items')
   .description('List all items')
   .action((options) => {
-    console.log('here', options);
     if (options.all) {
+      console.log('here we are');
       console.table(items);
       return;
     }
@@ -92,6 +117,8 @@ program
       return;
     }
     console.table(items);
+    db.end();
+    process.exit(0);
   });
 
 program.parse(process.argv);
