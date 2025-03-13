@@ -1,10 +1,10 @@
 const { connectToDB, client: db } = require('../config/db');
 
-const updateCommand = async (id, newItem) => {
+const inProgressCommand = async (id) => {
   try {
     await connectToDB();
-    await db.query('UPDATE tasks SET name = $1 WHERE id = $2', [
-      newItem,
+    await db.query('UPDATE tasks SET status = $1 WHERE id = $2', [
+      'inprogress',
       Number.parseInt(id),
     ]);
     console.log(`Updated Successfully item: ${id}`);
@@ -17,5 +17,5 @@ const updateCommand = async (id, newItem) => {
 };
 
 module.exports = {
-  updateCommand,
+  inProgressCommand,
 };

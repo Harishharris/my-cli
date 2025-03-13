@@ -4,15 +4,10 @@ const addCommand = async (newTasks) => {
   try {
     await connectToDB();
     for (const task of newTasks) {
-      const newItem = {
-        id: items.at(-1).id + 1,
-        name: task,
-      };
       await db.query('INSERT INTO tasks (name, status) VALUES ($1, $2)', [
-        newItem.name,
-        false,
+        task,
+        'todo',
       ]);
-      items.push(newItem);
     }
     await db.end();
     console.log('Tasks added successfully!');

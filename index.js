@@ -5,6 +5,8 @@ const { addCommand } = require('./controllers/add-command');
 const { updateCommand } = require('./controllers/update-command');
 const { deleteCommand } = require('./controllers/delete-command');
 const { listCommand } = require('./controllers/list-command');
+const { doneCommand } = require('./controllers/done-command');
+const { inProgressCommand } = require('./controllers/inprogress-command');
 require('dotenv').config();
 
 /**
@@ -16,7 +18,6 @@ require('dotenv').config();
 
 program.version('1.0.0').description('My Node CLI');
 program.option('-n, --name <type>', 'Add your name').action((options) => {
-  console.log('here', options);
   console.log(`Hey, ${options.name || 'Harish'}!`);
 });
 
@@ -28,6 +29,16 @@ program
   .action(updateCommand);
 
 program
+  .command('done <item...>')
+  .description('Mark an item as done')
+  .action(doneCommand);
+
+program
+  .command('inprogress <item...>')
+  .description('Mark an item as inprogress')
+  .action(inProgressCommand);
+
+program
   .command('del <item...>')
   .description('Delete an item')
   .action(deleteCommand);
@@ -35,7 +46,10 @@ program
 program
   .command('list')
   .option('-a, --all', 'List all items')
-  .option('-n --number <number>', 'List n items')
+  .option('-n <number>', 'List n items')
+  .option('-d, --done', 'List done items')
+  .option('-i, --inprogress', 'List inprogress items')
+  .option('-t, --todo', 'List todo items')
   .description('List all items')
   .action(listCommand);
 
