@@ -1,8 +1,7 @@
 const { Client } = require('pg');
 require('dotenv').config();
 
-const connectionString =
-  'postgresql://cli_owner:npg_qkwe1NBYf6Ed@ep-nameless-cake-a1kg3tu3-pooler.ap-southeast-1.aws.neon.tech/cli?sslmode=require';
+const connectionString = process.env.DATABASE_URL;
 
 const client = new Client({
   connectionString,
